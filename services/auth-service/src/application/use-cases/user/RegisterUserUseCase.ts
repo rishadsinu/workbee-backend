@@ -47,7 +47,7 @@ export class RegisterUserUseCase implements IRegisterUserUseCase {
 
     logger.info("otp", {otp});
     logger.info("otppppppppppp");
-
+    console.log(otp)
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
     await this._otpRepository.save({
       userId: savedUser.id!,

@@ -7,13 +7,19 @@ import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 import { ICreateReviewUseCase } from "../../ports/review/ICreateReviewUseCase";
 
 @injectable()
-export class CreateReviewUseCase implements ICreateReviewUseCase{
+export class CreateReviewUseCase implements ICreateReviewUseCase {
   constructor(
     @inject("ReviewRepository") private readonly _reviewRepository: IReviewRepository,
     @inject("WorkRepository") private readonly _workRepository: IWorkRepository
-  ) {}
+  ) { }
 
   async execute(dto: CreateReviewDto): Promise<ReviewResponseDto> {
+
+    // console.log("full dto:", dto);
+    // console.log("workid", dto.workId);
+    // console.log("loged user", dto.userId);
+    // console.log("userid", dto.userId);
+    
     if (!dto.rating || dto.rating < 1 || dto.rating > 5) {
       throw new Error(ErrorMessages.REVIEW.INVALID_RATING);
     }
@@ -24,9 +30,13 @@ export class CreateReviewUseCase implements ICreateReviewUseCase{
     const work = await this._workRepository.findById(dto.workId);
     if (!work) throw new Error(ErrorMessages.WORK.WORK_NOT_FOUND);
 
+    console.log('work userid',work.userId)
+    console.log('dto userid',dto.userId)
+
     if (String(work.userId) !== String(dto.userId)) {
       throw new Error(ErrorMessages.WORK.DONT_HAVE_PERMISSION_TO_UPDATE);
     }
+    
     if (work.status !== "completed") {
       throw new Error(ErrorMessages.REVIEW.WORK_NOT_COMPLETED);
     }
